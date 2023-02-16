@@ -39,7 +39,7 @@ app.MapGet(StaticApiEndpointNames.PRODUCT_STATUS_REQUEST_ID, (AppDbContext conte
 
     if(listingRequest.RequestStatus!.ToUpper() == Enum.GetName(typeof(RequestStatusType), 2))
     {
-        listingStatus.ResourceURL = $"{StaticApiEndpointNames.PRODUCTS}/{Guid.NewGuid().ToString()}";
+        listingStatus.ResourceURL = StaticApiEndpointNames.PRODUCTS_RESOURCE_URL;
         return Results.Ok(listingStatus);
     }
 
@@ -48,7 +48,7 @@ app.MapGet(StaticApiEndpointNames.PRODUCT_STATUS_REQUEST_ID, (AppDbContext conte
 });
 
 //Final endpoint
-app.MapGet(StaticApiEndpointNames.PRODUCT_STATUS_REQUEST_ID, (string requestId) => {
+app.MapGet(StaticApiEndpointNames.PRODUCTS_REQUEST_ID, (string requestId) => {
     return Results.Ok(StaticNames.MESSAGE);
 });
 
