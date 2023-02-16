@@ -46,4 +46,9 @@ app.MapGet("api/v1/productstatus/{requestId}", (AppDbContext context, string req
     return Results.Ok(listingStatus);
 });
 
+//Final endpoint
+app.MapGet("api/v1/productstatus/{requestId}", (string requestId) => {
+    return Results.Ok("This is where you would pass back the final result");
+});
+
 app.Run();
