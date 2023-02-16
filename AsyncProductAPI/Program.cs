@@ -20,7 +20,7 @@ app.MapPost("api/v1/products", async (AppDbContext context, ListingRequest listi
     await context.ListingRequests.AddRangeAsync(listingRequest);
     await context.SaveChangesAsync();
 
-    return Results.Accepted($"api/v1/producstatus/{}");
+    return Results.Accepted($"api/v1/productstatus/{listingRequest.RequestId}", listingRequest);
 });
 
 app.Run();
