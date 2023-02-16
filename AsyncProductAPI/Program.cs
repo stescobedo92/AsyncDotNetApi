@@ -42,7 +42,7 @@ app.MapGet("api/v1/productstatus/{requestId}", (AppDbContext context, string req
         return Results.Ok(listingStatus);
     }
 
-    listingRequest.EstimatedCompetionTime = "2023-02-16:11:00:00";
+    listingStatus.EstimatedCompetionTime = "2023-02-16:11:00:00";
     return Results.Ok(listingStatus);
 });
 
