@@ -10,5 +10,5 @@ public class AppDbContext : DbContext
         
     }
 
-    DbSet<ListingRequest> ListingRequests => Set<ListingRequest>();
+    public DbSet<ListingRequest> ListingRequests => Set<ListingRequest>();
 }
