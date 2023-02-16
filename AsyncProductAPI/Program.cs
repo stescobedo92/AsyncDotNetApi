@@ -1,6 +1,7 @@
 using AsyncProductAPI.Data;
 using AsyncProductAPI.Dtos;
 using AsyncProductAPI.Models;
+using AsyncProductAPI.Constants;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,21 +12,21 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 
 //Start Endpoint
-app.MapPost("api/v1/products", async (AppDbContext context, ListingRequest listingRequest) => {
+app.MapPost(StaticApiEndpointNames.PRODUCTS, async (AppDbContext context, ListingRequest listingRequest) => {
     if(listingRequest is null)
         return Results.BadRequest();
 
-    listingRequest.RequestStatus = "ACCEPT";
-    listingRequest.EstimatedCompetionTime = "2023-02-16:10:53:00";
+    listingRequest.RequestStatus = Enum.GetName(typeof(RequestStatusType), 1);
+    listingRequest.EstimatedCompetionTime = StaticNames.ESTIMATED_COMPETION_TIME_ORIGINAL;
 
     await context.ListingRequests.AddRangeAsync(listingRequest);
     await context.SaveChangesAsync();
 
-    return Results.Accepted($"api/v1/productstatus/{listingRequest.RequestId}", listingRequest);
+    return Results.Accepted($"{StaticApiEndpointNames.PRODUCT_STATUS}/{listingRequest.RequestId}", listingRequest);
 });
 
 //Status endpoint
-app.MapGet("api/v1/productstatus/{requestId}", (AppDbContext context, string requestId) => {
+app.MapGet(StaticApiEndpointNames.PRODUCT_STATUS_REQUEST_ID, (AppDbContext context, string requestId) => {
     var listingRequest = context.ListingRequests.FirstOrDefault(listing => listing.RequestId == requestId);
 
     if( listingRequest is null) 
@@ -36,19 +37,19 @@ app.MapGet("api/v1/productstatus/{requestId}", (AppDbContext context, string req
         ResourceURL = String.Empty
     };
 
-    if(listingRequest.RequestStatus!.ToUpper() == "COMPLETE")
+    if(listingRequest.RequestStatus!.ToUpper() == Enum.GetName(typeof(RequestStatusType), 2))
     {
-        listingStatus.ResourceURL = $"api/v1/products/{Guid.NewGuid().ToString()}";
+        listingStatus.ResourceURL = $"{StaticApiEndpointNames.PRODUCTS}/{Guid.NewGuid().ToString()}";
         return Results.Ok(listingStatus);
     }
 
-    listingStatus.EstimatedCompetionTime = "2023-02-16:11:00:00";
+    listingStatus.EstimatedCompetionTime = StaticNames.ESTIMATED_COMPETION_TIME_MODIFIED;
     return Results.Ok(listingStatus);
 });
 
 //Final endpoint
-app.MapGet("api/v1/productstatus/{requestId}", (string requestId) => {
-    return Results.Ok("This is where you would pass back the final result");
+app.MapGet(StaticApiEndpointNames.PRODUCT_STATUS_REQUEST_ID, (string requestId) => {
+    return Results.Ok(StaticNames.MESSAGE);
 });
 
 app.Run();
