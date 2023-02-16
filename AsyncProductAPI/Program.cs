@@ -1,4 +1,5 @@
 using AsyncProductAPI.Data;
+using AsyncProductAPI.Dtos;
 using AsyncProductAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +22,28 @@ app.MapPost("api/v1/products", async (AppDbContext context, ListingRequest listi
     await context.SaveChangesAsync();
 
     return Results.Accepted($"api/v1/productstatus/{listingRequest.RequestId}", listingRequest);
+});
+
+//Status endpoint
+app.MapGet("api/v1/productstatus/{requestId}", (AppDbContext context, string requestId) => {
+    var listingRequest = context.ListingRequests.FirstOrDefault(listing => listing.RequestId == requestId);
+
+    if( listingRequest is null) 
+        return Results.NotFound();
+
+    ListingStatus listingStatus = new ListingStatus {
+        RequestStatus = listingRequest.RequestStatus,
+        ResourceURL = String.Empty
+    };
+
+    if(listingRequest.RequestStatus!.ToUpper() == "COMPLETE")
+    {
+        listingStatus.ResourceURL = $"api/v1/products/{Guid.NewGuid().ToString()}";
+        return Results.Ok(listingStatus);
+    }
+
+    listingRequest.EstimatedCompetionTime = "2023-02-16:11:00:00";
+    return Results.Ok(listingStatus);
 });
 
 app.Run();
